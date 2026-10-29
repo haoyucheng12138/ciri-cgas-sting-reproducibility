@@ -1,0 +1,29 @@
+"cell_type","n_human","n_mouse_ortholog","n_in_GSE131193"
+"Activated B cell",26,24,19
+"Activated CD4 T cell",25,24,21
+"Activated CD8 T cell",26,26,23
+"Activated dendritic cell",35,30,26
+"CD56bright natural killer cell",40,31,26
+"CD56dim natural killer cell",16,13,13
+"Central memory CD4 T cell",28,26,25
+"Central memory CD8 T cell",21,21,19
+"Effector memeory CD4 T cell",27,25,24
+"Effector memeory CD8 T cell",25,25,21
+"Eosinophil",17,14,10
+"Gamma delta T cell",31,27,25
+"Immature B cell",19,15,13
+"Immature dendritic cell",23,22,20
+"Macrophage",33,29,25
+"Mast cell",17,21,14
+"MDSC",20,19,19
+"Memory B cell",14,13,11
+"Monocyte",21,20,18
+"Natural killer cell",35,33,32
+"Natural killer T cell",44,40,32
+"Neutrophil",18,13,11
+"Plasmacytoid dendritic cell",32,30,27
+"Regulatory T cell",20,21,19
+"T follicular helper cell",36,32,28
+"Type 1 T helper cell",77,74,64
+"Type 17 T helper cell",27,25,19
+"Type 2 T helper cell",29,26,23
