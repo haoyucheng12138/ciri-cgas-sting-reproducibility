@@ -1,0 +1,7 @@
+"feature_space","task","n_seeds","AUC_reported_seed12345","AUC_min","AUC_median","AUC_max","fraction_AUC_ge_0.95","nonzero_reported","nonzero_min","nonzero_median","nonzero_max","fits_not_converged"
+"A_original_39","Cortex_to_Striatum",200,0.96875,0.953125,0.96875,0.96875,1,16,12,16,18,0
+"A_original_39","WT_to_Gpx1KO",200,1,1,1,1,1,19,9,19,21,0
+"B_full_transcriptome","Cortex_to_Striatum",30,0.96875,0.96875,0.96875,0.984375,1,123,81,123,123,0
+"B_full_transcriptome","WT_to_Gpx1KO",30,0.984375,0.984375,0.984375,0.984375,1,120,120,120,120,0
+"C_rebuilt_panel","Cortex_to_Striatum",200,0.96875,0.90625,0.9375,0.96875,0.385,15,13,16,24,0
+"C_rebuilt_panel","WT_to_Gpx1KO",200,0.953125,0.953125,0.953125,0.953125,1,10,10,10,11,0

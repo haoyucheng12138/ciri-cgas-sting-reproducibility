@@ -6,7 +6,7 @@
 #  Model: alpha = 0.4; lambda.min by 10-fold CV (binomial deviance); predictors standardised internally;
 #  set.seed(12345) immediately before cv.glmnet. Test AUC with 2,000 stratified bootstrap 95% CI (pROC).
 #  Feature spaces:
-#    A. original 39-gene panel (reference/original_39gene_candidate_panel.csv; B2m not on the array) - reproduces
+#    A. original 39-gene panel (reference/original_39gene_candidate_panel.csv; B2m is on the array but removed by the expression filter, leaving 39 genes) - reproduces
 #       the original model; coefficients are reported from this fit (replace the earlier Table S3/S4 values).
 #    B. full transcriptome (all 7,693 genes) - Reviewer 1.1.
 #    C. rebuilt panel: the original mechanistic genes + Trpc6 + top-20 hubs of the corrected PPI (04).
@@ -51,11 +51,13 @@ for (s in names(spaces)) for (t in names(tasks)) {
   ap <- c("Tap1", "Tap2", "Tapbp", "Tapbpl", "H2-K1", "H2-D1", "H2-T23", "Psmb8", "Psmb9", "Psmb10", "B2m")
   rk <- match(ap, names(f$nz))
   summ[[paste(s, t)]] <- data.frame(feature_space = s, task = t, n_candidates = f$n_cand, lambda_min = signif(f$lambda, 4), intercept = round(f$intercept, 4),
-    n_nonzero = length(f$nz), test_AUC = round(f$auc, 4), CI_low = round(f$ci[1], 3), CI_high = round(f$ci[2], 3), accuracy = round(f$acc, 4),
+    n_nonzero = length(f$nz), test_AUC = f$auc, CI_low = f$ci[1], CI_high = f$ci[2], accuracy = f$acc,
     top10_by_abs_coef = paste(head(names(f$nz), 10), collapse = ";"),
     antigen_genes_rank = paste(sprintf("%s=%s", ap[!is.na(rk)], rk[!is.na(rk)]), collapse = ";"))
 }
 summ <- do.call(rbind, summ); write.csv(summ, file.path(out, "elastic_net_summary.csv"), row.names = FALSE)
-print(summ[, c("feature_space", "task", "n_candidates", "n_nonzero", "test_AUC", "CI_low", "CI_high", "accuracy")], row.names = FALSE)
+## AUC, CI and accuracy are stored unrounded (16 test samples: AUC takes values k/64, e.g. 0.96875); rounding is left to reporting.
+x <- summ[, c("feature_space", "task", "n_candidates", "n_nonzero", "test_AUC", "CI_low", "CI_high", "accuracy")]
+x[, 5:8] <- round(x[, 5:8], 4); print(x, row.names = FALSE)
 cat("\n"); for (i in seq_len(nrow(summ))) cat(sprintf("%s | %s\n  top10: %s\n  antigen-processing ranks: %s\n", summ$feature_space[i], summ$task[i], summ$top10_by_abs_coef[i], summ$antigen_genes_rank[i]))
 save_session("08_elastic_net")

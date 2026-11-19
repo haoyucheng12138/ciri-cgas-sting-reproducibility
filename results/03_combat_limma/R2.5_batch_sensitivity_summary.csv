@@ -1,0 +1,7 @@
+"n_DEG","up","down","shared_with_primary","strategy","note"
+1421,1208,213,1421,"A ComBat(mod=~group) [primary]","1417 of 1421 primary DEGs have the same sign in both datasets separately"
+1177,1020,157,1177,"B ComBat(mod=NULL)",""
+1329,1141,188,1319,"C no ComBat, ~batch+group",""
+984,876,108,981,"D no correction",""
+1935,1676,259,1160,"E within GSE131712",""
+20,17,3,20,"E within GSE202659",""

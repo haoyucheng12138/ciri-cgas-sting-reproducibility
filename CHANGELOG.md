@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.1.0 (2026-11) - figures, supplementary tables, documentation
+
+- Added scripts 04_enrichment_check, 08b (seed sensitivity, convergence diagnostics), 11-14 (all figures and the
+  supplementary table file).
+- The composite score is labelled "IFN/STING score" in figures and tables (reviewer 1, comment 5).
+- `results/number_ledger.csv` reports PPI degrees instead of degree ranks (ranks were ambiguous because of ties) and
+  the Charoentong gene-set coverage (709 mouse genes, 618 in the GSE131193 matrix).
+- Corrected comments: B2m is on the GSE23163 array and is removed by the expression filter; the Excel-symbol
+  safeguard in 02_preprocess.R changes nothing in the current GEO files.
+- Added `reference/dataset_primary_publications.csv`.
+
 ## v2.0.0 (2026-10-29) - revision of manuscript HELIYON-D-26-05075
 
 This release replaces the previous code (v1). The previous repository described an independent glmnet
@@ -28,8 +39,8 @@ manuscript is written by the code to `results/number_ledger.csv`.
    Charoentong et al. 2017 Table S6 (28 cell types), mapped to mouse orthologs.
 9. **Elastic Net coefficient tables (former Table S3/S4)** did not match the coefficients of the fitted models. v2 reports
    the coefficients of the fitted glmnet models.
-10. **Preprocessing description.** The merged cohort is log2(FPKM + 1) (not TPM). Gene filters, duplicate handling,
-    Excel-damaged symbols ("1-Mar" -> "March1") and the Cgas/Mb21d1 synonym are now explicit in `R/02_preprocess.R`.
+10. **Preprocessing description.** The merged cohort is log2(FPKM + 1) (not TPM). Gene filters, duplicate handling
+    and the Cgas/Mb21d1 synonym are now explicit in `R/02_preprocess.R`.
 11. **GSE227317** labels are taken from GEO (T01-T05 = MCAO); Psmb10 is recomputed from the transcript-level FPKM.
 
 ### Analyses added in response to reviewers

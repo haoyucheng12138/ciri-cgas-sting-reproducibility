@@ -1,0 +1,5 @@
+"pathway","KEGG_pathway_genes","DEGs_in_pathway_by_KEGG_REST","reported_Count","identical_gene_sets","only_in_KEGG_REST","only_in_report"
+"mmu04612",87,22,22,TRUE,"",""
+"mmu04623",82,18,18,TRUE,"",""
+"mmu04621",212,45,45,TRUE,"",""
+"mmu04620",104,31,31,TRUE,"",""

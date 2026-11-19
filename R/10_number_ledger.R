@@ -25,6 +25,8 @@ st <- read.csv(rp("03_combat_limma", "STING_score_merged_cohort.csv"))
 add("Merged cohort STING score", st$score, sprintf("diff %.3f; Welch p %s; exact Wilcoxon p %s", st$diff, f(st$welch_p), f(st$wilcoxon_exact_p)), "results/03_combat_limma/STING_score_merged_cohort.csv")
 
 ## 04 enrichment / PPI
+mp <- read.csv(rp("04_enrichment_ppi", "DEG_to_Entrez_map.csv")); um <- read.csv(rp("04_enrichment_ppi", "DEG_unmapped.csv"))
+add("Enrichment", "DEGs mapped to Entrez (official symbol / unique alias / unmapped)", sprintf("%d / %d / %d", sum(mp$via == "symbol"), sum(mp$via == "alias"), nrow(um)), "results/04_enrichment_ppi/DEG_to_Entrez_map.csv")
 kg <- read.csv(rp("04_enrichment_ppi", "KEGG.csv"))
 add("Enrichment", "KEGG significant pathways", nrow(kg), "results/04_enrichment_ppi/KEGG.csv")
 for (id in c("mmu04621", "mmu04612", "mmu04623", "mmu04620")) { r <- kg[kg$ID == id, ]; if (nrow(r)) add("Enrichment", paste(id, r$Description), sprintf("%d genes; FDR %s", r$Count, f(r$p.adjust)), "results/04_enrichment_ppi/KEGG.csv") }
@@ -33,7 +35,8 @@ pn <- read.csv(rp("04_enrichment_ppi", "PPI_nodes_score700.csv")); pe <- read.cs
 add("PPI", "nodes / edges (STRING 11.5, >= 0.7)", sprintf("%d / %d", nrow(pn), nrow(pe)), "results/04_enrichment_ppi/PPI_nodes_score700.csv")
 add("PPI", "top 20 hubs (degree)", paste(sprintf("%s(%d)", head(pn$Gene, 20), head(pn$Degree, 20)), collapse = " "), "results/04_enrichment_ppi/PPI_nodes_score700.csv")
 ap <- c("Tap1", "Tap2", "Tapbp", "B2m", "H2-K1", "H2-D1", "Psmb8", "Stat1", "Cxcl10", "Isg15", "Tmem173", "Irf7")
-add("PPI", "degree rank of selected genes", paste(sprintf("%s=%s", ap, match(ap, pn$Gene)), collapse = " "), "results/04_enrichment_ppi/PPI_nodes_score700.csv")
+## degrees only: ranks are not reported because many nodes share the same degree (ties)
+add("PPI", "degree of selected genes", paste(sprintf("%s=%s", ap, pn$Degree[match(ap, pn$Gene)]), collapse = " "), "results/04_enrichment_ppi/PPI_nodes_score700.csv")
 
 ## 05 WGCNA
 sf <- read.csv(rp("05_wgcna", "soft_threshold.csv")); zk <- read.csv(rp("05_wgcna", "sample_connectivity_Zk.csv"))
@@ -57,6 +60,10 @@ cr <- read.csv(rp("06_ssgsea_sting", "STING_score_vs_ssGSEA_spearman.csv"))
 for (smp in c("all24", "primary12")) for (v in unique(cr$score)) { x <- cr[cr$samples == smp & cr$score == v, ]; x <- x[order(x$p), ]
   add("STING score vs ssGSEA (Spearman)", paste(smp, v, "top 3"), paste(sprintf("%s rho %.3f FDR %s", x$cell[1:3], x$rho[1:3], f(x$FDR[1:3])), collapse = "; "), "results/06_ssgsea_sting/STING_score_vs_ssGSEA_spearman.csv")
   y <- x[x$cell == "Activated CD8 T cell", ]; add("STING score vs ssGSEA (Spearman)", paste(smp, v, "Activated CD8 T cell"), sprintf("rho %.3f; FDR %s", y$rho, f(y$FDR)), "results/06_ssgsea_sting/STING_score_vs_ssGSEA_spearman.csv") }
+
+gmt <- strsplit(readLines(file.path(DIR_REF, "Charoentong28_mouse.gmt")), "\t"); g131 <- rownames(read_mat(file.path(DIR_PRO, "GSE131193_log2counts.csv")))
+ug <- unique(unlist(lapply(gmt, function(x) x[-(1:2)])))
+add("GSE131193 ssGSEA", "Charoentong mouse genes / in matrix / per-set range in matrix", sprintf("%d / %d / %d-%d", length(ug), sum(ug %in% g131), min(sapply(gmt, function(x) sum(x[-(1:2)] %in% g131))), max(sapply(gmt, function(x) sum(x[-(1:2)] %in% g131)))), "reference/Charoentong28_mouse.gmt")
 
 ## 07 intersection
 ic <- read.csv(rp("07_intersection", "intersection_counts.csv"))

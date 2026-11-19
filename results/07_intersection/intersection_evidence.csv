@@ -1,0 +1,7 @@
+"gene","logFC","FDR","module","kME_own","module_assoc_primary","in_WGCNA_core","in_all_three"
+"Btk",0.699,0.00138,"turquoise",0.59,TRUE,TRUE,TRUE
+"Igtp",1.294,0.000568,"red",0.821,FALSE,FALSE,FALSE
+"Irgm1",1.468,8.1e-05,"lightcyan",0.813,FALSE,FALSE,FALSE
+"Irgm2",0.797,0.00912,"red",0.906,FALSE,FALSE,FALSE
+"Tmem173",0.818,0.0058,"turquoise",0.813,TRUE,TRUE,TRUE
+"Trim56",0.678,0.000691,"green",0.917,FALSE,FALSE,FALSE

@@ -1,0 +1,7 @@
+"feature_space","task","n_candidates","lambda_min","intercept","n_nonzero","test_AUC","CI_low","CI_high","accuracy","top10_by_abs_coef","antigen_genes_rank"
+"A_original_39","Cortex_to_Striatum",39,0.04036,-33.9717,16,0.96875,0.859375,1,0.8125,"H2-K1;Oas2;Tap1;Psmb10;Rplp0;Eif4a1;Cd163;Tapbp;Eif6;Tapbpl","Tap1=3;Tap2=11;Tapbp=8;Tapbpl=10;H2-K1=1;Psmb8=14;Psmb10=4"
+"A_original_39","WT_to_Gpx1KO",39,0.04466,-43.0454,19,1,1,1,0.9375,"Rplp0;Tapbp;Tap1;Psmb10;Tapbpl;Ifih1;Tap2;Oas2;Eif4a1;Ddx58","Tap1=3;Tap2=7;Tapbp=2;Tapbpl=5;H2-K1=15;Psmb10=4"
+"B_full_transcriptome","Cortex_to_Striatum",7693,0.01168,-40.1324,123,0.96875,0.859375,1,0.8125,"Gtf3c6;Pax7;Pbld2;Nit2;Khk;Cdkl1;Anxa4;C030006K11Rik;BC048671;Asl","Tap1=60"
+"B_full_transcriptome","WT_to_Gpx1KO",7693,0.01156,-32.9252,120,0.984375,0.90625,1,0.5625,"Syncrip;Pbld2;Stra13;Dpysl4;Olfr675;Ugt1a10;Nol3;Retsat;Tsc22d3;Trp53inp1",""
+"C_rebuilt_panel","Cortex_to_Striatum",38,0.2493,-10.3096,15,0.96875,0.859375,1,0.875,"Tnf;Psmb10;Rps27a;Igtp;Rela;Tlr2;Myd88;Mmp9;Oas2;Stat3","Psmb10=2"
+"C_rebuilt_panel","WT_to_Gpx1KO",38,0.2386,-7.6424,10,0.953125,0.8125,1,0.9375,"Tnf;Rela;Ddx58;Tlr2;Cxcl10;Mmp9;Igtp;Psmb10;Il1b;Isg15","Psmb10=8"

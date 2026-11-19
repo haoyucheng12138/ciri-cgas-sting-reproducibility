@@ -1,0 +1,5 @@
+"table","n_tested","n_significant","Count_equals_k","all_genes_are_DEGs","max_abs_log10_p_difference","max_abs_FDR_difference","significant_set_reproduced","n_DEGs_annotated","background_N","PASS"
+"KEGG",327,110,TRUE,TRUE,1.78e-15,1.39e-16,TRUE,"743","11244",TRUE
+"GO_BP",5545,2322,TRUE,TRUE,3.55e-15,1.6e-16,TRUE,"1265","25615",TRUE
+"GO_CC",584,148,TRUE,TRUE,3.55e-15,2.08e-16,TRUE,"1277","25804",TRUE
+"GO_MF",1033,201,TRUE,TRUE,2.22e-15,6.94e-17,TRUE,"1245","23791",TRUE

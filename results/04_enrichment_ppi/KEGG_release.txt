@@ -1,0 +1,1 @@
+KEGG REST info (queried 2026-10-29 ): 	pathway        587  2026/10/28

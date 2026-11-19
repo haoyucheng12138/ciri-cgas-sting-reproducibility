@@ -6,7 +6,8 @@
 #                         log2(FPKM + 1); keep genes with mean log2 > 0.1
 #  merged cohort        : genes common to both filtered matrices (6 Sham + 6 tMCAO, Table S2)
 #  GSE131193            : normalised counts supplied by the submitters (symbol column "Ensembl gene");
-#                         Excel-converted symbols restored (e.g. "1-Mar" -> "March1"); duplicates -> median;
+#                         duplicates -> median (a safeguard restoring Excel-converted symbols such as "1-Mar" is
+#                         applied, but no such symbols occur in the current GEO files, so it changes nothing);
 #                         log2(x + 1); keep genes with mean log2 > 1.
 #                         NOTE: the columns of this file are grouped by condition and are NOT in accession order.
 #  GSE23163             : GeneSpring median-normalised ratios (series matrix; columns are GSM accessions);
@@ -25,7 +26,8 @@ colmap <- list()
 s2 <- read.csv(file.path(DIR_REF, "TableS2_merged_cohort_samples.csv"))
 ## Gene-symbol harmonisation across datasets. GSE202659 uses the current symbol "Cgas" for ENSMUSG00000032344,
 ## whereas GSE131712, GSE131193 and GSE23163 use the former symbol "Mb21d1"; the former symbol is used throughout
-## (matching the manuscript). Excel-converted symbols ("1-Mar" ...) are restored to "March1" ... .
+## (matching the manuscript). Excel-converted symbols ("1-Mar" ...) would be restored to "March1"; none occur in the current
+## GEO files (checked 2026-11-19), so this step is a safeguard only and is not described in the manuscript.
 harmonise <- function(sym, ensembl = NULL) {
   dm <- grepl("^\\d+-Mar$", sym); sym[dm] <- paste0("March", sub("-Mar$", "", sym[dm]))
   if (!is.null(ensembl)) sym[ensembl == "ENSMUSG00000032344"] <- "Mb21d1"

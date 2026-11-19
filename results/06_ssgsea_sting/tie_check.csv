@@ -1,0 +1,11 @@
+"comparison","feature","tied_values","bitwise_identical","underlying_count","p_reported_exact","p_exact_with_ties","changed"
+"primary_ipsi_tMCAO_vs_ipsi_sham","Cxcl10","3.9068906;5.169925",TRUE,"14;35",0.0562770562770563,0.0562770562770563,FALSE
+"primary_ipsi_tMCAO_vs_ipsi_sham","Psmb8","10.038919",TRUE,"1051",0.222943722943723,0.222943722943723,FALSE
+"day1_ipsi_tMCAO_vs_ipsi_sham","Cxcl10","3.9068906",TRUE,"14",0.2,0.2,FALSE
+"day1_ipsi_tMCAO_vs_ipsi_sham","Psmb8","10.038919",TRUE,"1051",0.0999999999999999,0.1,FALSE
+"day7_ipsi_tMCAO_vs_ipsi_sham","Cxcl10","5.169925",TRUE,"35",0.6,0.6,FALSE
+"all_tMCAO_vs_all_sham","Mb21d1","5.5849625;5.4594316;5.8073549",TRUE,"47;43;55",0.311357776696315,0.311357776696315,FALSE
+"all_tMCAO_vs_all_sham","Cxcl10","3.9068906;5.169925",TRUE,"14;35",0.212940377700103,0.212940377700103,FALSE
+"all_tMCAO_vs_all_sham","Tap1","9.4093909",TRUE,"679",0.43372497740515,0.43372497740515,FALSE
+"all_tMCAO_vs_all_sham","Psmb8","10.038919",TRUE,"1051",0.659456037299623,0.659456037299623,FALSE
+"all_tMCAO_vs_all_sham","Psmb10","9.9023751",TRUE,"956",0.600868441021894,0.600868441021894,FALSE
