@@ -1,5 +1,5 @@
 # =============================================================================
-# 10_number_ledger.R  -  collect every number used in the revised manuscript from the result files.
+# 10_number_ledger.R  -  collect the main numbers reported in the revised manuscript from the result files.
 # Output: results/number_ledger.csv (item, value, source file). Nothing in this table is typed by hand.
 # =============================================================================
 source("R/00_config.R")

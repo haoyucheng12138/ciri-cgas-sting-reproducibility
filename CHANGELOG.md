@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.2.0 (2026-11) - revision with experiments; documentation corrections
+
+No analysis was changed: all transcriptomic results, `results/number_ledger.csv` and Figures 2-6, S1-S3 are identical in content to v2.1.0.
+
+- Figure 1: the bottom box now refers to the experiments of the revision (Supplementary Figs. S4-S6) and lists the measured
+  readouts; "signalling" changed to "signaling". Figure 1 and the other main figures are written with a white background
+  (Figure 1 previously had a transparent background).
+- Supplementary tables: one file `Supplementary_Tables_S1-S11.xlsx`; new Table S11 (qPCR primers, from
+  `reference/qPCR_primers_TableS11.csv`); Table S6A gains the Benjamini-Hochberg FDR of the primary-trait correlation
+  (the values reported in the manuscript, previously only in `results/05_wgcna/module_trait_primary_sorted.csv`);
+  "merged validation cohort" and "discovery cohort" replaced by "merged cohort" and "GSE131193 (brain microvessel fragments)".
+- Wording: `results/number_ledger.csv` lists the main reported numbers, not every number; all other values are in the
+  result files under `results/`.
+- Correction to the v2.0.0 notes below: 22 of the 24 GSE131193 columns were attached to the wrong GSM accession; 20 of the
+  24 samples thereby received an incorrect condition (injury, time point or hemisphere); 4 kept a correct condition.
+
 ## v2.1.0 (2026-11) - figures, supplementary tables, documentation
 
 - Added scripts 04_enrichment_check, 08b (seed sensitivity, convergence diagnostics), 11-14 (all figures and the
@@ -21,7 +37,7 @@ manuscript is written by the code to `results/number_ledger.csv`.
 ### Problems found in the original analysis and corrected in v2
 
 1. **GSE131193 sample labels.** The columns of the GEO supplementary count file are grouped by condition, whereas the
-   original analysis attached GSM accessions to them in accession order. 22 of 24 samples carried the wrong label; the
+   original analysis attached GSM accessions to them in accession order. 22 of 24 columns carried the wrong accession (see v2.2.0); the
    original "Sham vs Stroke" comparison was in fact day 1 vs day 7. Columns are now assigned by name from the GEO
    sample titles (`data/processed/sample_column_map.csv`; audit in `reference/GSE131193_LKFlow_label_vs_true_content.csv`).
    All WGCNA, ssGSEA and STING-score results for this cohort were recomputed.

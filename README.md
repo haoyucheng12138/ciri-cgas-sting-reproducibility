@@ -1,8 +1,9 @@
-# Reproducibility code: multi-cohort transcriptomics of cGAS-STING-associated signalling and MHC class I antigen-processing genes in cerebral ischemia-reperfusion injury
+# Reproducibility code: multi-cohort transcriptomics of cGAS-STING-associated signaling and MHC class I antigen-processing genes in cerebral ischemia-reperfusion injury
 
 Code for manuscript HELIYON-D-26-05075 (revised version). The pipeline starts from the public GEO files and
-reproduces every number reported in the revised manuscript; the numbers are collected automatically in
-`results/number_ledger.csv`. See `CHANGELOG.md` for the corrections made relative to the original submission.
+reproduces every transcriptomic result, figure and supplementary table of the revised manuscript; the main reported
+numbers are collected automatically in `results/number_ledger.csv`, and all other values are in the result files
+under `results/`. See `CHANGELOG.md` for the corrections made relative to the original submission.
 
 ## Data (all public, NCBI GEO)
 
@@ -30,7 +31,7 @@ saved to `results/04_enrichment_ppi/`), Ensembl BioMart release 116 (rat transcr
 `results/` and `figures/` contain the outputs reported in the revised manuscript. KEGG pathways are queried online
 (KEGG REST via clusterProfiler), so a re-run uses the current KEGG release: the archived results used the release of
 2026-10-28 (queried 2026-10-29; `results/04_enrichment_ppi/KEGG_release.txt`). A re-run on 2026-11-19 (KEGG release of
-2026-11-18) reproduced every number in `results/number_ledger.csv` except the KEGG results (111 instead of 110
+2026-11-18) reproduced every entry of `results/number_ledger.csv` except the KEGG results (111 instead of 110
 significant pathways, with slightly different FDR values, e.g. mmu04612 FDR 2.85e-07 instead of 2.77e-07). All other
 analyses, including GO and STRING, were identical.
 
@@ -60,7 +61,7 @@ Rscript R/run_all.R               # about 1-1.5 h; WGCNA takes ~35 min
 | `08b_elastic_net_seed_sensitivity.R` | AUC and selected genes across cross-validation seeds; convergence diagnostics |
 | `10_number_ledger.R` | collects all reported numbers into `results/number_ledger.csv` |
 | `11_figures_main.R`, `12_figures_supplementary.R`, `14_figure1_design.R` | Figures 1-6 and S1-S3 (`figures/`) |
-| `13_supplementary_tables.R` | Supplementary Tables S1-S10 (one xlsx file) |
+| `13_supplementary_tables.R` | Supplementary Tables S1-S11 (one xlsx file; S11 = qPCR primers from `reference/qPCR_primers_TableS11.csv`) |
 | `02_preprocess_check.R` | optional, authors only: compares the matrices with those of the original platform analysis |
 
 ## Preprocessing rules (`R/02_preprocess.R`)
@@ -82,6 +83,7 @@ Rscript R/run_all.R               # about 1-1.5 h; WGCNA takes ~35 min
 | `original_39gene_candidate_panel.csv` | Elastic Net candidate panel of the original submission (40 genes; B2m is removed by the expression filter, leaving 39) |
 | `GSE227317_Ensembl_transcript_map.tsv`, `..._release.txt`, `build_GSE227317_transcript_map.R` | rat transcript-to-gene map (Ensembl 116) |
 | `GSE131193_column_to_GSM_map.csv`, `GSE131193_LKFlow_label_vs_true_content.csv` | audit of the GSE131193 labelling error in the original analysis |
+| `qPCR_primers_TableS11.csv` | RT-qPCR primer sequences of the experiments added in the revision (Supplementary Table S11) |
 
 ## Notes on interpretation
 
@@ -89,7 +91,8 @@ Rscript R/run_all.R               # about 1-1.5 h; WGCNA takes ~35 min
 - GSE227317 has 5 vs 5 samples; an AUC of 1 has a saturated confidence interval and is reported as a directional check only.
 - Results are transcript-level associations; they do not measure protein levels, MHC-I surface expression or antigen presentation.
 - The composite score (mean z-score of Mb21d1, Tmem173, Irf3, Isg15, Cxcl10) is called "IFN/STING score" (type I IFN/STING-associated score); file and column names keep the earlier name "STING5".
-- The qPCR, Western blot and BV2 experiments of the revised manuscript are not part of this repository.
+- The qPCR, Western blot and BV2 experiments of the revised manuscript (Supplementary Figs. S4-S6) are not part of this repository;
+  only their primer sequences (Supplementary Table S11) are included. Figure 1 shows these experiments in its bottom box.
 
 ## Citation
 

@@ -1,5 +1,5 @@
 # =============================================================================
-# 03_combat_limma.R  -  merged validation cohort (6 Sham vs 6 tMCAO).
+# 03_combat_limma.R  -  merged cohort (6 Sham vs 6 tMCAO).
 #  Primary (as in the original analysis): ComBat(batch = dataset, mod = ~group) -> limma ~group.
 #  Sensitivity (Reviewer 2.5): (B) ComBat without the group covariate; (C) no ComBat, limma ~batch + group;
 #  (D) no correction; (E) each dataset analysed alone (3 vs 3).

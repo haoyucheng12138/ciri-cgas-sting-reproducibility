@@ -1,0 +1,15 @@
+{
+    "title":  "Code and archived results for \"Integrative multi-cohort transcriptomics of cGAS-STING-associated type I interferon signaling and MHC class I antigen processing in cerebral ischemia-reperfusion injury\" (v2.2.0)",
+    "upload_type":  "software",
+    "version":  "v2.2.0",
+    "description":  "\u003cp\u003eCode, archived results and figures for the revised manuscript HELIYON-D-26-05075. The main reported numbers are listed in results/number_ledger.csv; all other values are in the result files under results/. See CHANGELOG.md for changes since v2.1.0 (no analysis was changed).\u003c/p\u003e",
+    "creators":  [
+                     {
+                         "name":  "Hao, Yucheng",
+                         "affiliation":  "Zhejiang University",
+                         "orcid":  "0009-0007-2725-6654"
+                     }
+                 ],
+    "license":  "cc-by-4.0",
+    "access_right":  "open"
+}

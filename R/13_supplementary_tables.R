@@ -1,7 +1,8 @@
 # =============================================================================
-# 13_supplementary_tables.R  -  Supplementary Tables S1-S10 (one Excel workbook, one sheet per table),
+# 13_supplementary_tables.R  -  Supplementary Tables S1-S11 (one Excel workbook, one sheet per table),
 # built only from GEO metadata (data/raw), processed data and results/. Nothing is typed by hand except the
-# descriptive dataset fields of Table S1, which are copied from the GEO series records.
+# descriptive dataset fields of Table S1, which are copied from the GEO series records. Table S11 (qPCR primers of the
+# experiments added in the revision) is read from reference/qPCR_primers_TableS11.csv, copied from the experimental protocol.
 # =============================================================================
 source("R/00_config.R")
 suppressMessages(library(openxlsx))
@@ -81,7 +82,9 @@ S5b <- read.csv(rp("04_enrichment_ppi", "PPI_nodes_score700.csv"))
 S5c <- read.csv(rp("04_enrichment_ppi", "DEG_to_Entrez_map.csv"))
 
 mt <- read.csv(rp("05_wgcna", "module_trait_r.csv"), check.names = FALSE); mp <- read.csv(rp("05_wgcna", "module_trait_p.csv"), check.names = FALSE)
-S6a <- merge(mt, mp, by = "module", suffixes = c("_r", "_p")); S6a <- S6a[order(S6a$ipsi_tMCAO_vs_ipsi_sham_p), ]
+S6a <- merge(mt, mp, by = "module", suffixes = c("_r", "_p"))
+S6a$ipsi_tMCAO_vs_ipsi_sham_FDR <- p.adjust(S6a$ipsi_tMCAO_vs_ipsi_sham_p, "BH")   # BH across the 23 module eigengenes (incl. grey), as in 05_wgcna.R
+S6a <- S6a[order(S6a$ipsi_tMCAO_vs_ipsi_sham_p), ]
 S6b <- read.csv(rp("05_wgcna", "focal_genes.csv"))
 S6c <- read.csv(rp("05_wgcna", "soft_threshold.csv"))
 
@@ -110,9 +113,9 @@ put <- function(sheet, title, df_list, notes = NULL) {
 }
 put("S1_Datasets", "Table S1. GEO datasets analysed (title, platform, PubMed ID and sample numbers read from the GEO records) and the primary publication of each dataset.", list(` ` = S1))
 put("S2_Samples", "Table S2. Samples and their labels. Columns of each GEO file were assigned to GSM accessions by sample title.",
-    list(`A. Merged validation cohort (GSE131712, GSE202659)` = S2a, `B. GSE131193 (discovery cohort); the last two columns document the labelling error of the original analysis` = S2b,
+    list(`A. Merged cohort (GSE131712, GSE202659)` = S2a, `B. GSE131193 (brain microvessel fragments); the last two columns document the labelling error of the original analysis` = S2b,
          `C. GSE23163 samples used for Elastic Net` = S2c, `D. GSE227317` = S2d))
-put("S3_DEGs", "Table S3. Differentially expressed genes of the merged validation cohort (tMCAO vs Sham, 6 vs 6; ComBat with group covariate, limma; FDR < 0.05 and |log2FC| > 0.585), with the batch-correction sensitivity analyses.",
+put("S3_DEGs", "Table S3. Differentially expressed genes of the merged cohort (tMCAO vs Sham, 6 vs 6; ComBat with group covariate, limma; FDR < 0.05 and |log2FC| > 0.585), with the batch-correction sensitivity analyses.",
     list(` ` = S3))
 put("S4_Batch_sensitivity", "Table S4. Batch-correction sensitivity analyses and composite IFN/STING score in the merged cohort.",
     list(`A. DEG counts by strategy` = S4, `B. IFN/STING score (z-mean of Mb21d1, Tmem173, Irf3, Isg15, Cxcl10, Trex1)` = st))
@@ -120,7 +123,7 @@ put("S5_Enrichment_PPI", "Table S5. GO/KEGG enrichment of the DEGs (clusterProfi
     list(`A. Significant terms` = S5, `B. PPI nodes` = S5b, `C. DEG symbol to Entrez mapping` = S5c),
     notes = c("All tested terms (including non-significant) are in results/04_enrichment_ppi/*_all_tested.csv of the code repository."))
 put("S6_WGCNA", "Table S6. WGCNA of GSE131193 (24 samples; unsigned network; soft power 12).",
-    list(`A. Module-trait correlations (Pearson r and p)` = S6a, `B. Module membership of selected genes` = S6b, `C. Soft-threshold scan` = S6c))
+    list(`A. Module-trait correlations (Pearson r and p; FDR = Benjamini-Hochberg adjustment of the primary-trait p values across the 23 module eigengenes)` = S6a, `B. Module membership of selected genes` = S6b, `C. Soft-threshold scan` = S6c))
 put("S7_Immune_STING", "Table S7. GSE131193 immune signatures (ssGSEA, Charoentong et al. 2017, 28 cell types) and composite IFN/STING score (type I IFN/STING-associated score).",
     list(`A. Gene and IFN/STING-score group tests (exact Wilcoxon; Welch t)` = gt, `B. ssGSEA group tests` = ct,
          `C. Spearman correlations of IFN/STING-score versions with ssGSEA scores` = cr, `D. Mouse immune gene sets` = S7d))
@@ -132,6 +135,8 @@ put("S9_Elastic_net", "Table S9. Elastic Net logistic regression in GSE23163 (al
          `C. Non-zero coefficients (seed 12345)` = coefs),
     notes = c("With 16 training samples, 10-fold CV leaves 1-2 samples per fold; glmnet therefore uses ungrouped CV error (grouped = FALSE) and warns that one class has fewer than 8 observations."))
 put("S10_Rat", "Table S10. GSE227317 rat cortex (5 MCAO 2 h/R 24 h vs 5 Sham): AUC with 2,000 stratified bootstrap 95% CI and exact Wilcoxon test.", list(` ` = rat))
-out <- file.path(DIR_RES, "Supplementary_Tables_S1-S10.xlsx"); saveWorkbook(wb, out, overwrite = TRUE)
+pr <- read.csv(file.path(DIR_REF, "qPCR_primers_TableS11.csv"), check.names = FALSE, fileEncoding = "UTF-8")
+put("S11_qPCR_primers", "Table S11. Primer sequences used for RT-qPCR of mouse brain tissue (Supplementary Fig. S4A). Tmem173 encodes STING (official symbol Sting1); beta-actin was the reference gene.", list(` ` = pr))
+out <- file.path(DIR_RES, "Supplementary_Tables_S1-S11.xlsx"); saveWorkbook(wb, out, overwrite = TRUE)
 cat("written", out, "\n"); for (s in names(wb)) cat(sprintf("  %-22s\n", s))
 cat(sprintf("rows: S3 %d | S5 terms %d, nodes %d | S6 modules %d | S7 cell tests %d | S9 coefficients %d | S10 %d\n", nrow(S3), nrow(S5), nrow(S5b), nrow(S6a), nrow(ct), nrow(coefs), nrow(rat)))

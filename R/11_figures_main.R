@@ -10,8 +10,8 @@ th <- theme_bw(base_size = 8) + theme(panel.grid.minor = element_blank(), plot.t
 COL_GRP <- c(Sham = "#4C78A8", Stroke = "#E45756", tMCAO = "#E45756")
 COL_BAT <- c(GSE131712 = "#54A24B", GSE202659 = "#B279A2")
 save_fig <- function(p, name, w, h) {
-  ggsave(file.path(FIG, paste0(name, ".pdf")), p, width = w, height = h, units = "in", device = cairo_pdf)
-  ggsave(file.path(FIG, paste0(name, ".tiff")), p, width = w, height = h, units = "in", dpi = 300, device = ragg::agg_tiff, compression = "lzw")
+  ggsave(file.path(FIG, paste0(name, ".pdf")), p, width = w, height = h, units = "in", device = cairo_pdf, bg = "white")
+  ggsave(file.path(FIG, paste0(name, ".tiff")), p, width = w, height = h, units = "in", dpi = 300, device = ragg::agg_tiff, compression = "lzw", bg = "white")
   cat("saved", name, "\n")
 }
 fmtp <- function(p) ifelse(p < 0.001, formatC(p, format = "e", digits = 1), formatC(p, format = "f", digits = 3))

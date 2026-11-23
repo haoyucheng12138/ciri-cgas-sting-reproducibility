@@ -22,7 +22,7 @@ soft_titles <- function(acc) {
 }
 colmap <- list()
 
-## ---- merged validation cohort ---------------------------------------------
+## ---- merged cohort -------------------------------------------------------
 s2 <- read.csv(file.path(DIR_REF, "TableS2_merged_cohort_samples.csv"))
 ## Gene-symbol harmonisation across datasets. GSE202659 uses the current symbol "Cgas" for ENSMUSG00000032344,
 ## whereas GSE131712, GSE131193 and GSE23163 use the former symbol "Mb21d1"; the former symbol is used throughout
