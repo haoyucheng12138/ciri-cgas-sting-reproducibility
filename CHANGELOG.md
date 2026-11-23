@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.2.1 (2026-11) - supplementary table numbering
+
+No analysis was changed: all files under `results/` except the supplementary table file, and all figures, are identical to v2.2.0.
+
+- Supplementary tables renumbered in order of first citation in the revised manuscript: former Table S5 (GO/KEGG enrichment
+  and PPI) is now Table S7, former Table S6 (WGCNA) is now Table S5, and former Table S7 (immune signatures and IFN/STING
+  score) is now Table S6. Tables S1-S4 and S8-S11 are unchanged. Only sheet names, table titles and sheet order of
+  `Supplementary_Tables_S1-S11.xlsx` changed; cell contents are identical.
+
 ## v2.2.0 (2026-11) - revision with experiments; documentation corrections
 
 No analysis was changed: all transcriptomic results, `results/number_ledger.csv` and Figures 2-6, S1-S3 are identical in content to v2.1.0.
@@ -8,7 +17,7 @@ No analysis was changed: all transcriptomic results, `results/number_ledger.csv`
   readouts; "signalling" changed to "signaling". Figure 1 and the other main figures are written with a white background
   (Figure 1 previously had a transparent background).
 - Supplementary tables: one file `Supplementary_Tables_S1-S11.xlsx`; new Table S11 (qPCR primers, from
-  `reference/qPCR_primers_TableS11.csv`); Table S6A gains the Benjamini-Hochberg FDR of the primary-trait correlation
+  `reference/qPCR_primers_TableS11.csv`); Table S6A (Table S5A since v2.2.1) gains the Benjamini-Hochberg FDR of the primary-trait correlation
   (the values reported in the manuscript, previously only in `results/05_wgcna/module_trait_primary_sorted.csv`);
   "merged validation cohort" and "discovery cohort" replaced by "merged cohort" and "GSE131193 (brain microvessel fragments)".
 - Wording: `results/number_ledger.csv` lists the main reported numbers, not every number; all other values are in the

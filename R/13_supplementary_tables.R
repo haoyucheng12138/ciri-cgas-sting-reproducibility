@@ -3,6 +3,8 @@
 # built only from GEO metadata (data/raw), processed data and results/. Nothing is typed by hand except the
 # descriptive dataset fields of Table S1, which are copied from the GEO series records. Table S11 (qPCR primers of the
 # experiments added in the revision) is read from reference/qPCR_primers_TableS11.csv, copied from the experimental protocol.
+# Since v2.2.1 the tables are numbered in order of first citation in the manuscript: S5 = WGCNA, S6 = immune signatures /
+# IFN/STING score, S7 = enrichment and PPI. The R object names below (S5, S6a, S7d ...) keep the earlier numbering.
 # =============================================================================
 source("R/00_config.R")
 suppressMessages(library(openxlsx))
@@ -119,14 +121,14 @@ put("S3_DEGs", "Table S3. Differentially expressed genes of the merged cohort (t
     list(` ` = S3))
 put("S4_Batch_sensitivity", "Table S4. Batch-correction sensitivity analyses and composite IFN/STING score in the merged cohort.",
     list(`A. DEG counts by strategy` = S4, `B. IFN/STING score (z-mean of Mb21d1, Tmem173, Irf3, Isg15, Cxcl10, Trex1)` = st))
-put("S5_Enrichment_PPI", "Table S5. GO/KEGG enrichment of the DEGs (clusterProfiler; BH FDR < 0.05) and STRING v11.5 network (combined score >= 0.7).",
-    list(`A. Significant terms` = S5, `B. PPI nodes` = S5b, `C. DEG symbol to Entrez mapping` = S5c),
-    notes = c("All tested terms (including non-significant) are in results/04_enrichment_ppi/*_all_tested.csv of the code repository."))
-put("S6_WGCNA", "Table S6. WGCNA of GSE131193 (24 samples; unsigned network; soft power 12).",
+put("S5_WGCNA", "Table S5. WGCNA of GSE131193 (24 samples; unsigned network; soft power 12).",
     list(`A. Module-trait correlations (Pearson r and p; FDR = Benjamini-Hochberg adjustment of the primary-trait p values across the 23 module eigengenes)` = S6a, `B. Module membership of selected genes` = S6b, `C. Soft-threshold scan` = S6c))
-put("S7_Immune_STING", "Table S7. GSE131193 immune signatures (ssGSEA, Charoentong et al. 2017, 28 cell types) and composite IFN/STING score (type I IFN/STING-associated score).",
+put("S6_Immune_STING", "Table S6. GSE131193 immune signatures (ssGSEA, Charoentong et al. 2017, 28 cell types) and composite IFN/STING score (type I IFN/STING-associated score).",
     list(`A. Gene and IFN/STING-score group tests (exact Wilcoxon; Welch t)` = gt, `B. ssGSEA group tests` = ct,
          `C. Spearman correlations of IFN/STING-score versions with ssGSEA scores` = cr, `D. Mouse immune gene sets` = S7d))
+put("S7_Enrichment_PPI", "Table S7. GO/KEGG enrichment of the DEGs (clusterProfiler; BH FDR < 0.05) and STRING v11.5 network (combined score >= 0.7).",
+    list(`A. Significant terms` = S5, `B. PPI nodes` = S5b, `C. DEG symbol to Entrez mapping` = S5c),
+    notes = c("All tested terms (including non-significant) are in results/04_enrichment_ppi/*_all_tested.csv of the code repository."))
 put("S8_Intersection", "Table S8. Three-set intersection: DEGs, WGCNA core genes and curated cGAS-STING pathway genes.", list(`A. Counts` = ic, `B. Genes` = ev))
 seed <- read.csv(rp("08_elastic_net", "seed_sensitivity_summary.csv"))
 put("S9_Elastic_net", "Table S9. Elastic Net logistic regression in GSE23163 (alpha 0.4, 10-fold CV, lambda.min, seed 12345). Predictors were standardized internally (glmnet default); coefficients are reported on the original log2 expression scale, as returned by coef().",
@@ -139,4 +141,4 @@ pr <- read.csv(file.path(DIR_REF, "qPCR_primers_TableS11.csv"), check.names = FA
 put("S11_qPCR_primers", "Table S11. Primer sequences used for RT-qPCR of mouse brain tissue (Supplementary Fig. S4A). Tmem173 encodes STING (official symbol Sting1); beta-actin was the reference gene.", list(` ` = pr))
 out <- file.path(DIR_RES, "Supplementary_Tables_S1-S11.xlsx"); saveWorkbook(wb, out, overwrite = TRUE)
 cat("written", out, "\n"); for (s in names(wb)) cat(sprintf("  %-22s\n", s))
-cat(sprintf("rows: S3 %d | S5 terms %d, nodes %d | S6 modules %d | S7 cell tests %d | S9 coefficients %d | S10 %d\n", nrow(S3), nrow(S5), nrow(S5b), nrow(S6a), nrow(ct), nrow(coefs), nrow(rat)))
+cat(sprintf("rows: S3 %d | S7 terms %d, nodes %d | S5 modules %d | S6 cell tests %d | S9 coefficients %d | S10 %d\n", nrow(S3), nrow(S5), nrow(S5b), nrow(S6a), nrow(ct), nrow(coefs), nrow(rat)))
