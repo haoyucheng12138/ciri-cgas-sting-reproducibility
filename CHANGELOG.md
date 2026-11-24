@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.2.2 (2026-11) - official gene symbols and American spelling in figures and tables
+
+No analysis was changed: every file under `results/` except the supplementary table file is identical to v2.2.1.
+
+- Figures 3-6 and the supplementary tables show current official MGI symbols (`official_symbol()` in `R/00_config.R`):
+  Tmem173 -> Sting1 and Mb21d1 -> Cgas in the figures; in the tables every former symbol with a unique official symbol.
+  Table S3 also lists the symbol of the source file; Table S11 lists Sting1 and Actb (beta-actin).
+- American spelling in Figure 5A ("normalized") and in the titles of Tables S1 and S2.
+- The supplementary table file no longer refers to drawing parts that openxlsx 4.2.9 does not write (these references made Excel
+  offer to repair the file); cell contents are unchanged.
+
 ## v2.2.1 (2026-11) - supplementary table numbering
 
 No analysis was changed: all files under `results/` except the supplementary table file, and all figures, are identical to v2.2.0.

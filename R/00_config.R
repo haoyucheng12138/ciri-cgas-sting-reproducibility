@@ -30,3 +30,17 @@ collapse_median <- function(m, ids) {
 
 ## Row-wise z-score then column mean (composite score).
 zmean <- function(m) colMeans(t(scale(t(m))))
+
+## Display symbols for figures and supplementary tables: current official MGI symbol (org.Mm.eg.db). Official symbols are kept;
+## a former symbol that is an alias of exactly one official symbol is replaced (e.g. Tmem173 -> Sting1, Mb21d1 -> Cgas);
+## anything else (non-gene labels, ambiguous aliases) is returned unchanged. Analysis files keep the symbols of the GEO files.
+official_symbol <- function(x) {
+  x <- as.character(x); db <- org.Mm.eg.db::org.Mm.eg.db
+  todo <- setdiff(unique(x[!is.na(x)]), AnnotationDbi::keys(db, "SYMBOL"))
+  todo <- intersect(todo, AnnotationDbi::keys(db, "ALIAS"))
+  if (!length(todo)) return(x)
+  al <- suppressMessages(AnnotationDbi::select(db, todo, "SYMBOL", "ALIAS"))
+  al <- unique(al[!is.na(al$SYMBOL), c("ALIAS", "SYMBOL")]); n <- table(al$ALIAS); al <- al[al$ALIAS %in% names(n)[n == 1], ]
+  i <- match(x, al$ALIAS); x[!is.na(i)] <- al$SYMBOL[i[!is.na(i)]]
+  x
+}

@@ -1,6 +1,7 @@
 # =============================================================================
 # 11_figures_main.R  -  Figures 2-6 of the revised manuscript, drawn only from files in data/processed and results/.
 # Every number printed on a figure is read from those files (no typed values). Output: figures/*.pdf and 300-dpi *.tiff.
+# Gene labels are shown as current official MGI symbols (official_symbol() in 00_config.R; e.g. Tmem173 -> Sting1, Mb21d1 -> Cgas).
 # =============================================================================
 source("R/00_config.R")
 suppressMessages({ library(ggplot2); library(patchwork); library(ggrepel); library(igraph); library(scales) })
@@ -43,7 +44,7 @@ A <- read.csv(rp("03_combat_limma", "limma_primary_ComBat_withGroup_all_genes.cs
 A$cls <- ifelse(A$DEG & A$logFC > 0, "Up", ifelse(A$DEG & A$logFC < 0, "Down", "NS"))
 nU <- sum(A$cls == "Up"); nD <- sum(A$cls == "Down")
 lab_genes <- c("Cxcl10", "Isg15", "Tmem173", "Stat1", "Tap1", "Tap2", "H2-K1", "H2-D1", "Psmb8", "Irgm1", "Igtp", "Mb21d1", "Irf3")
-A$lab <- ifelse(rownames(A) %in% lab_genes, rownames(A), NA)
+A$lab <- ifelse(rownames(A) %in% lab_genes, rownames(A), NA); A$lab[!is.na(A$lab)] <- official_symbol(A$lab[!is.na(A$lab)])
 f3a <- ggplot(A, aes(logFC, -log10(adj.P.Val), colour = cls)) + geom_point(size = 0.4, alpha = 0.6) +
   geom_vline(xintercept = c(-0.585, 0.585), linetype = 2, linewidth = 0.3) + geom_hline(yintercept = -log10(0.05), linetype = 2, linewidth = 0.3) +
   geom_text_repel(aes(label = lab), size = 2.3, colour = "black", min.segment.length = 0, max.overlaps = 50, na.rm = TRUE) +
@@ -52,7 +53,7 @@ f3a <- ggplot(A, aes(logFC, -log10(adj.P.Val), colour = cls)) + geom_point(size 
 kt <- read.csv(rp("03_combat_limma", "R2.5_key_genes_across_strategies.csv"))
 show <- c("Cxcl10", "Isg15", "Tmem173", "Mb21d1", "Irf3", "Stat1", "Tap1", "Tap2", "Tapbp", "B2m", "H2-K1", "H2-D1", "Psmb8", "Psmb10")
 kl <- do.call(rbind, lapply(c("A", "B", "C"), function(s) data.frame(gene = kt$gene, strategy = s, logFC = kt[[paste0(s, "_logFC")]], FDR = kt[[paste0(s, "_FDR")]])))
-kl <- kl[kl$gene %in% show, ]; kl$gene <- factor(kl$gene, levels = rev(show))
+kl <- kl[kl$gene %in% show, ]; kl$gene <- factor(official_symbol(kl$gene), levels = rev(official_symbol(show)))
 kl$strategy <- factor(kl$strategy, levels = c("A", "B", "C"), labels = c("ComBat\n(group kept)", "ComBat\n(no covariate)", "No ComBat\n(batch in model)"))
 kl$star <- ifelse(kl$FDR < 0.001, "***", ifelse(kl$FDR < 0.01, "**", ifelse(kl$FDR < 0.05, "*", "")))
 f3b <- ggplot(kl, aes(strategy, gene, fill = logFC)) + geom_tile(colour = "white") + geom_text(aes(label = sprintf("%.2f%s", logFC, star)), size = 2.1) +
@@ -83,7 +84,7 @@ f4b <- ggplot(ml, aes(trait, module, fill = r)) + geom_tile(colour = "white") + 
   scale_fill_gradient2(low = "#4C78A8", mid = "white", high = "#E45756", midpoint = 0, limits = c(-1, 1)) + th +
   theme(axis.text.x = element_text(angle = 30, hjust = 1)) + labs(x = NULL, y = "Module (genes)", fill = "r", title = "Module eigengene\u2013trait correlation\n(Pearson r, p)")
 fg <- read.csv(rp("05_wgcna", "focal_genes.csv"))
-fg$gene <- factor(fg$gene, levels = fg$gene[order(fg$module_r_primary, fg$kME)])
+fg$gene <- official_symbol(fg$gene); fg$gene <- factor(fg$gene, levels = fg$gene[order(fg$module_r_primary, fg$kME)])
 fg$assoc <- ifelse(fg$module_p_primary < 0.05, "module associated (p < 0.05)", "module not associated")
 ## kME can be negative in an unsigned network (gene anti-correlated with its module eigengene, e.g. Mb21d1, Tapbpl):
 ## point size = |kME|, label shows the signed kME so no gene is dropped.
@@ -109,11 +110,12 @@ pl$Group <- ipsi$Group[match(pl$ID, ipsi$ID)]; pl$Time <- ipsi$time[match(pl$ID,
 key <- c("IFN/STING score", sting5, "Tap1", "H2-K1", "Psmb8"); pl$feature <- factor(pl$feature, levels = key)
 pv <- gt[match(c("STING5_zmean", key[-1]), gt$feature), ]
 pl_lab <- data.frame(feature = factor(key, levels = key), lab = sprintf("p = %s", fmtp(pv$wilcox_p)))
+pl$feature <- factor(official_symbol(as.character(pl$feature)), levels = official_symbol(key)); pl_lab$feature <- factor(official_symbol(key), levels = official_symbol(key))
 f5a <- ggplot(pl, aes(Group, value)) + geom_boxplot(aes(fill = Group), outlier.shape = NA, width = 0.55, linewidth = 0.3, alpha = 0.6) +
   geom_point(aes(shape = Time), position = position_jitter(width = 0.08, seed = 1), size = 1.2) +
   geom_text(data = pl_lab, aes(x = 1.5, y = Inf, label = lab), vjust = 1.3, size = 2.2, inherit.aes = FALSE) +
   facet_wrap(~feature, scales = "free_y", nrow = 2) + scale_fill_manual(values = COL_GRP) + scale_y_continuous(expand = expansion(mult = c(0.05, 0.22))) +
-  th + theme(strip.text = element_text(face = "italic")) + labs(x = NULL, y = "log2 normalised count (score: z-mean)", shape = "Time",
+  th + theme(strip.text = element_text(face = "italic")) + labs(x = NULL, y = "log2 normalized count (score: z-mean)", shape = "Time",
   title = "GSE131193 brain microvessels, ipsilateral hemisphere: tMCAO vs sham (n = 6 vs 6; exact Wilcoxon)")
 ct <- read.csv(rp("06_ssgsea_sting", "ssGSEA_group_tests.csv")); ct <- ct[ct$comparison == "primary_ipsi_tMCAO_vs_ipsi_sham", ]
 ct <- ct[order(ct$diff), ]; ct$cell <- factor(ct$cell, levels = ct$cell); ct$sig <- ifelse(ct$FDR_wilcox < 0.05, "FDR < 0.05", "FDR \u2265 0.05")
@@ -190,7 +192,7 @@ f6b <- ggplot() +
   scale_colour_manual(values = c("edge with an MHC-I gene" = "#E45756", "edge with a cGAS-STING / IFN gene" = "#E0A100", "other edge" = "grey60"), name = NULL, drop = FALSE) +
   scale_alpha_manual(values = c("edge with an MHC-I gene" = 0.8, "edge with a cGAS-STING / IFN gene" = 0.55, "other edge" = 0.16), guide = "none") +
   geom_point(data = vd, aes(x, y, size = Degree, fill = class), shape = 21, stroke = 0.25, colour = "grey20") +
-  geom_text(data = vd, aes(lx, ly, label = name, angle = angle, hjust = hjust, vjust = vjust), size = 1.9, fontface = "italic") +
+  geom_text(data = vd, aes(lx, ly, label = official_symbol(name), angle = angle, hjust = hjust, vjust = vjust), size = 1.9, fontface = "italic") +
   scale_fill_manual(values = c("cGAS-STING / IFN" = "#F2B701", "MHC-I antigen processing" = "#E45756", "other high-degree node" = "#9ecae1"),
                     labels = c(sprintf("cGAS-STING / IFN (inner ring, n = %d)", nc[1]), sprintf("MHC-I antigen processing (middle ring, n = %d)", nc[2]),
                                sprintf("other top-40 node (outer ring, n = %d)", nc[3])), name = NULL) +

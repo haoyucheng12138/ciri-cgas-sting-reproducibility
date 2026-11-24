@@ -90,6 +90,8 @@ Rscript R/run_all.R               # about 1-1.5 h; WGCNA takes ~35 min
 - The Elastic Net hold-out tasks use a single study (GSE23163); the AUCs describe within-study generalisation and are not external validation.
 - GSE227317 has 5 vs 5 samples; an AUC of 1 has a saturated confidence interval and is reported as a directional check only.
 - Results are transcript-level associations; they do not measure protein levels, MHC-I surface expression or antigen presentation.
+- Gene symbols: analysis files keep the symbols of the GEO files; figures and supplementary tables show the current official MGI
+  symbols (`official_symbol()` in `R/00_config.R`; e.g. Tmem173 = Sting1, Mb21d1 = Cgas).
 - The composite score (mean z-score of Mb21d1, Tmem173, Irf3, Isg15, Cxcl10) is called "IFN/STING score" (type I IFN/STING-associated score); file and column names keep the earlier name "STING5".
 - The qPCR, Western blot and BV2 experiments of the revised manuscript (Supplementary Figs. S4-S6) are not part of this repository;
   only their primer sequences (Supplementary Table S11) are included. Figure 1 shows these experiments in its bottom box.

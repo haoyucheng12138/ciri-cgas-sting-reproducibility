@@ -3,6 +3,8 @@
 # built only from GEO metadata (data/raw), processed data and results/. Nothing is typed by hand except the
 # descriptive dataset fields of Table S1, which are copied from the GEO series records. Table S11 (qPCR primers of the
 # experiments added in the revision) is read from reference/qPCR_primers_TableS11.csv, copied from the experimental protocol.
+# Since v2.2.2 gene columns show the current official MGI symbol (official_symbol(), 00_config.R); Table S3 also keeps the symbol
+# of the source file.
 # Since v2.2.1 the tables are numbered in order of first citation in the manuscript: S5 = WGCNA, S6 = immune signatures /
 # IFN/STING score, S7 = enrichment and PPI. The R object names below (S5, S6a, S7d ...) keep the earlier numbering.
 # =============================================================================
@@ -66,7 +68,7 @@ A <- read.csv(rp("03_combat_limma", "limma_primary_ComBat_withGroup_all_genes.cs
 B <- read.csv(rp("03_combat_limma", "limma_sensitivity_B.csv"), row.names = 1); C <- read.csv(rp("03_combat_limma", "limma_sensitivity_C.csv"), row.names = 1)
 E1 <- read.csv(rp("03_combat_limma", "limma_within_GSE131712.csv"), row.names = 1); E2 <- read.csv(rp("03_combat_limma", "limma_within_GSE202659.csv"), row.names = 1)
 dg <- rownames(A)[A$DEG]
-S3 <- data.frame(Gene = dg, log2FC = A[dg, "logFC"], AveExpr = A[dg, "AveExpr"], t = A[dg, "t"], P = A[dg, "P.Value"], FDR = A[dg, "adj.P.Val"],
+S3 <- data.frame(Gene = official_symbol(dg), Symbol_in_source_file = dg, log2FC = A[dg, "logFC"], AveExpr = A[dg, "AveExpr"], t = A[dg, "t"], P = A[dg, "P.Value"], FDR = A[dg, "adj.P.Val"],
                  Direction = ifelse(A[dg, "logFC"] > 0, "up", "down"),
                  FDR_ComBat_no_covariate = B[dg, "adj.P.Val"], DEG_ComBat_no_covariate = B[dg, "DEG"],
                  FDR_batch_in_model = C[dg, "adj.P.Val"], DEG_batch_in_model = C[dg, "DEG"],
@@ -80,17 +82,17 @@ kg <- read.csv(rp("04_enrichment_ppi", "KEGG.csv")); cols <- c("ID", "Descriptio
 S5 <- rbind(cbind(Source = "KEGG", kg[, cols]),
             do.call(rbind, lapply(c("BP", "CC", "MF"), function(o) cbind(Source = paste("GO", o), read.csv(rp("04_enrichment_ppi", paste0("GO_", o, ".csv")))[, cols]))))
 names(S5)[names(S5) == "p.adjust"] <- "FDR_BH"
-S5b <- read.csv(rp("04_enrichment_ppi", "PPI_nodes_score700.csv"))
+S5b <- read.csv(rp("04_enrichment_ppi", "PPI_nodes_score700.csv")); S5b$Gene <- official_symbol(S5b$Gene)
 S5c <- read.csv(rp("04_enrichment_ppi", "DEG_to_Entrez_map.csv"))
 
 mt <- read.csv(rp("05_wgcna", "module_trait_r.csv"), check.names = FALSE); mp <- read.csv(rp("05_wgcna", "module_trait_p.csv"), check.names = FALSE)
 S6a <- merge(mt, mp, by = "module", suffixes = c("_r", "_p"))
 S6a$ipsi_tMCAO_vs_ipsi_sham_FDR <- p.adjust(S6a$ipsi_tMCAO_vs_ipsi_sham_p, "BH")   # BH across the 23 module eigengenes (incl. grey), as in 05_wgcna.R
 S6a <- S6a[order(S6a$ipsi_tMCAO_vs_ipsi_sham_p), ]
-S6b <- read.csv(rp("05_wgcna", "focal_genes.csv"))
+S6b <- read.csv(rp("05_wgcna", "focal_genes.csv")); S6b$gene <- official_symbol(S6b$gene)
 S6c <- read.csv(rp("05_wgcna", "soft_threshold.csv"))
 
-gt <- read.csv(rp("06_ssgsea_sting", "genes_and_STING_score_group_tests.csv"))
+gt <- read.csv(rp("06_ssgsea_sting", "genes_and_STING_score_group_tests.csv")); gt$feature <- official_symbol(gt$feature)
 ct <- read.csv(rp("06_ssgsea_sting", "ssGSEA_group_tests.csv")); names(ct)[names(ct) == "FDR_wilcox"] <- "FDR_BH"
 cr <- read.csv(rp("06_ssgsea_sting", "STING_score_vs_ssGSEA_spearman.csv"))
 gmt <- strsplit(readLines(file.path(DIR_REF, "Charoentong28_mouse.gmt")), "\t")
@@ -98,13 +100,14 @@ cov <- read.csv(file.path(DIR_REF, "Charoentong28_mouse_coverage.csv"))
 S7d <- data.frame(Cell_type = gsub("_", " ", sapply(gmt, `[`, 1)), Mouse_genes = sapply(gmt, function(x) paste(x[-(1:2)], collapse = ", ")))
 S7d <- merge(S7d, cov, by.x = "Cell_type", by.y = "cell_type")
 
-ev <- read.csv(rp("07_intersection", "intersection_evidence.csv")); ic <- read.csv(rp("07_intersection", "intersection_counts.csv"))
+ev <- read.csv(rp("07_intersection", "intersection_evidence.csv")); ev$gene <- official_symbol(ev$gene); ic <- read.csv(rp("07_intersection", "intersection_counts.csv"))
 
 en <- read.csv(rp("08_elastic_net", "elastic_net_summary.csv"))
 coefs <- do.call(rbind, lapply(seq_len(nrow(en)), function(i) { x <- read.csv(rp("08_elastic_net", sprintf("coefficients_%s_%s.csv", en$feature_space[i], en$task[i])))
-  cbind(Feature_space = en$feature_space[i], Task = en$task[i], x) }))
+  cbind(Feature_space = en$feature_space[i], Task = en$task[i], x) })); coefs$gene <- official_symbol(coefs$gene)
 rat <- read.csv(rp("09_rat_roc", "rat_ROC.csv"))
 
+SYM_NOTE <- "Gene symbols are the current official MGI symbols (org.Mm.eg.db 3.23.0); former symbols used in the GEO files (e.g., Tmem173 = Sting1, Mb21d1 = Cgas) were converted. Table S3 also lists the symbol of the source file."
 wb <- createWorkbook(); hs <- createStyle(textDecoration = "bold", fgFill = "#DDEBF7", wrapText = TRUE)
 put <- function(sheet, title, df_list, notes = NULL) {
   addWorksheet(wb, sheet); writeData(wb, sheet, title, startRow = 1); addStyle(wb, sheet, createStyle(textDecoration = "bold"), rows = 1, cols = 1)
@@ -113,32 +116,56 @@ put <- function(sheet, title, df_list, notes = NULL) {
     writeData(wb, sheet, df_list[[nm]], startRow = r, headerStyle = hs); r <- r + nrow(df_list[[nm]]) + 1 }
   setColWidths(wb, sheet, cols = 1:30, widths = "auto")
 }
-put("S1_Datasets", "Table S1. GEO datasets analysed (title, platform, PubMed ID and sample numbers read from the GEO records) and the primary publication of each dataset.", list(` ` = S1))
+put("S1_Datasets", "Table S1. GEO datasets analyzed (title, platform, PubMed ID and sample numbers read from the GEO records) and the primary publication of each dataset.", list(` ` = S1))
 put("S2_Samples", "Table S2. Samples and their labels. Columns of each GEO file were assigned to GSM accessions by sample title.",
-    list(`A. Merged cohort (GSE131712, GSE202659)` = S2a, `B. GSE131193 (brain microvessel fragments); the last two columns document the labelling error of the original analysis` = S2b,
+    list(`A. Merged cohort (GSE131712, GSE202659)` = S2a, `B. GSE131193 (brain microvessel fragments); the last two columns document the labeling error of the original analysis` = S2b,
          `C. GSE23163 samples used for Elastic Net` = S2c, `D. GSE227317` = S2d))
 put("S3_DEGs", "Table S3. Differentially expressed genes of the merged cohort (tMCAO vs Sham, 6 vs 6; ComBat with group covariate, limma; FDR < 0.05 and |log2FC| > 0.585), with the batch-correction sensitivity analyses.",
-    list(` ` = S3))
+    list(` ` = S3), notes = SYM_NOTE)
 put("S4_Batch_sensitivity", "Table S4. Batch-correction sensitivity analyses and composite IFN/STING score in the merged cohort.",
-    list(`A. DEG counts by strategy` = S4, `B. IFN/STING score (z-mean of Mb21d1, Tmem173, Irf3, Isg15, Cxcl10, Trex1)` = st))
+    list(`A. DEG counts by strategy` = S4, `B. IFN/STING score (z-mean of Cgas, Sting1, Irf3, Isg15, Cxcl10, Trex1)` = st), notes = SYM_NOTE)
 put("S5_WGCNA", "Table S5. WGCNA of GSE131193 (24 samples; unsigned network; soft power 12).",
-    list(`A. Module-trait correlations (Pearson r and p; FDR = Benjamini-Hochberg adjustment of the primary-trait p values across the 23 module eigengenes)` = S6a, `B. Module membership of selected genes` = S6b, `C. Soft-threshold scan` = S6c))
+    list(`A. Module-trait correlations (Pearson r and p; FDR = Benjamini-Hochberg adjustment of the primary-trait p values across the 23 module eigengenes)` = S6a, `B. Module membership of selected genes` = S6b, `C. Soft-threshold scan` = S6c), notes = SYM_NOTE)
 put("S6_Immune_STING", "Table S6. GSE131193 immune signatures (ssGSEA, Charoentong et al. 2017, 28 cell types) and composite IFN/STING score (type I IFN/STING-associated score).",
     list(`A. Gene and IFN/STING-score group tests (exact Wilcoxon; Welch t)` = gt, `B. ssGSEA group tests` = ct,
-         `C. Spearman correlations of IFN/STING-score versions with ssGSEA scores` = cr, `D. Mouse immune gene sets` = S7d))
+         `C. Spearman correlations of IFN/STING-score versions with ssGSEA scores` = cr, `D. Mouse immune gene sets` = S7d), notes = SYM_NOTE)
 put("S7_Enrichment_PPI", "Table S7. GO/KEGG enrichment of the DEGs (clusterProfiler; BH FDR < 0.05) and STRING v11.5 network (combined score >= 0.7).",
     list(`A. Significant terms` = S5, `B. PPI nodes` = S5b, `C. DEG symbol to Entrez mapping` = S5c),
-    notes = c("All tested terms (including non-significant) are in results/04_enrichment_ppi/*_all_tested.csv of the code repository."))
-put("S8_Intersection", "Table S8. Three-set intersection: DEGs, WGCNA core genes and curated cGAS-STING pathway genes.", list(`A. Counts` = ic, `B. Genes` = ev))
+    notes = c("All tested terms (including non-significant) are in results/04_enrichment_ppi/*_all_tested.csv of the code repository.", SYM_NOTE))
+put("S8_Intersection", "Table S8. Three-set intersection: DEGs, WGCNA core genes and curated cGAS-STING pathway genes.", list(`A. Counts` = ic, `B. Genes` = ev), notes = SYM_NOTE)
 seed <- read.csv(rp("08_elastic_net", "seed_sensitivity_summary.csv"))
 put("S9_Elastic_net", "Table S9. Elastic Net logistic regression in GSE23163 (alpha 0.4, 10-fold CV, lambda.min, seed 12345). Predictors were standardized internally (glmnet default); coefficients are reported on the original log2 expression scale, as returned by coef().",
     list(`A. Performance on the held-out test sets (pre-specified seed 12345)` = en,
          `B. Dependence on the random CV fold assignment (seeds 1-200; full transcriptome seeds 1-30)` = seed,
          `C. Non-zero coefficients (seed 12345)` = coefs),
-    notes = c("With 16 training samples, 10-fold CV leaves 1-2 samples per fold; glmnet therefore uses ungrouped CV error (grouped = FALSE) and warns that one class has fewer than 8 observations."))
+    notes = c("With 16 training samples, 10-fold CV leaves 1-2 samples per fold; glmnet therefore uses ungrouped CV error (grouped = FALSE) and warns that one class has fewer than 8 observations.", SYM_NOTE))
 put("S10_Rat", "Table S10. GSE227317 rat cortex (5 MCAO 2 h/R 24 h vs 5 Sham): AUC with 2,000 stratified bootstrap 95% CI and exact Wilcoxon test.", list(` ` = rat))
 pr <- read.csv(file.path(DIR_REF, "qPCR_primers_TableS11.csv"), check.names = FALSE, fileEncoding = "UTF-8")
-put("S11_qPCR_primers", "Table S11. Primer sequences used for RT-qPCR of mouse brain tissue (Supplementary Fig. S4A). Tmem173 encodes STING (official symbol Sting1); beta-actin was the reference gene.", list(` ` = pr))
+pr$Gene <- official_symbol(pr$Gene); pr$Gene[pr$Gene == "\u03b2-Actin"] <- "Actb"
+put("S11_qPCR_primers", "Table S11. Primer sequences used for RT-qPCR of mouse brain tissue (Supplementary Fig. S4A). Sting1 (former symbol Tmem173, which is used in Supplementary Fig. S4A) encodes STING; Actb (beta-actin) was the reference gene.", list(` ` = pr))
 out <- file.path(DIR_RES, "Supplementary_Tables_S1-S11.xlsx"); saveWorkbook(wb, out, overwrite = TRUE)
+## openxlsx 4.2.9 lists drawing and VML parts in the sheet relationships and [Content_Types].xml without writing them, which makes
+## Excel offer to repair the file. Remove references to parts that are not in the package (cell contents are not changed).
+drop_dangling_parts <- function(f) {
+  f <- normalizePath(f, winslash = "/", mustWork = TRUE)  # zip::zip(root = ) changes the working directory
+  td <- tempfile("xlsx_"); dir.create(td); on.exit(unlink(td, recursive = TRUE))
+  utils::unzip(f, exdir = td); rd <- function(x) readChar(x, file.size(x), useBytes = TRUE)
+  for (r in list.files(file.path(td, "xl", "worksheets", "_rels"), full.names = TRUE)) {
+    s <- rd(r); rel <- regmatches(s, gregexpr("<Relationship [^>]*/>", s, useBytes = TRUE))[[1]]
+    tg <- sub('.*Target="([^"]+)".*', "\\1", rel)
+    gone <- rel[!file.exists(file.path(td, "xl", "worksheets", tg))]
+    for (g in gone) s <- sub(g, "", s, fixed = TRUE, useBytes = TRUE)
+    writeBin(charToRaw(s), r)
+  }
+  ct <- file.path(td, "[Content_Types].xml"); s <- rd(ct)
+  ov <- regmatches(s, gregexpr("<Override [^>]*/>", s, useBytes = TRUE))[[1]]
+  pn <- sub('.*PartName="/([^"]+)".*', "\\1", ov)
+  for (g in ov[!file.exists(file.path(td, pn))]) s <- sub(g, "", s, fixed = TRUE, useBytes = TRUE)
+  writeBin(charToRaw(s), ct)
+  parts <- list.files(td, recursive = TRUE, all.files = TRUE)
+  parts <- c("[Content_Types].xml", setdiff(parts, "[Content_Types].xml"))
+  unlink(f); zip::zip(f, files = parts, root = td, include_directories = FALSE)
+}
+drop_dangling_parts(out)
 cat("written", out, "\n"); for (s in names(wb)) cat(sprintf("  %-22s\n", s))
 cat(sprintf("rows: S3 %d | S7 terms %d, nodes %d | S5 modules %d | S6 cell tests %d | S9 coefficients %d | S10 %d\n", nrow(S3), nrow(S5), nrow(S5b), nrow(S6a), nrow(ct), nrow(coefs), nrow(rat)))
